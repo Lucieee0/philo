@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/07/02 19:39:30 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/07/02 19:48:38 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,9 @@ int	main(int argc, char *argv[])
 {
 	t_table	*table;
 	t_philo	*philo_list;
-	int i = 0;
+	int		i;
 
+	i = 0;
 	table = (t_table *)malloc(sizeof(t_table));
 	if (!table)
 		return (1);

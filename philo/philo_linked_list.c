@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:42:35 by lusimon           #+#    #+#             */
-/*   Updated: 2025/07/02 19:42:49 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/07/02 19:50:14 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ t_philo	*create_philo_circular_linked_list(t_table *table)
 {
 	int		i;
 	t_philo	*lst_philo;
-	t_philo *last;
+	t_philo	*last;
 
 	lst_philo = NULL;
 	i = 0;
@@ -81,7 +81,8 @@ t_philo	*create_philo_circular_linked_list(t_table *table)
 		ft_lstadd_back(&lst_philo, i + 1, table);
 		i++;
 	}
-	//Make circular linked list
+	//make the last node point to the first one
+	//circular linked list
 	if (lst_philo)
 	{
 		last = ft_lstlast(lst_philo);
