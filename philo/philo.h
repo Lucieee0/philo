@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/07/02 19:41:23 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/18 16:40:31 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_philo	t_philo;
 
 typedef struct s_table
 {
+	long			start_time;
 	int				nbr_philo;
 	long			time_to_die;
 	long			time_to_eat;
@@ -42,7 +43,10 @@ typedef struct s_table
 	int				nbr_of_meals;
 	int				stop;
 	pthread_mutex_t	stop_lock;
+	//Used to protect the stop variable.
+	//Multiple threads (philosophers + monitor) may read/write stop concurrently.
 	pthread_mutex_t	print_lock;
+	//Used to prevent messages from mixing when multiple philosophers print simultaneously.
 	t_philo			*philos; // pointer to the first philo in the circular linked list
 }	t_table;
 
@@ -51,11 +55,16 @@ typedef struct s_philo
 {
 	int				id; // philo nbr 1, philo nbr 2 ... 
 	pthread_mutex_t	fork;
+	//philo->fork: lock left
+	//philo->next->fork: lock right
 	struct s_philo	*next;
 	int				times_eaten;
 	long			last_meal_time;
 	t_state			state;
 	t_table			*table;
+	unsigned long	reaction_time;
+	//very important that each philo have a different reaction time 
+	//so that we avoid deadlocks
 }	t_philo;
 
 //helper_functions

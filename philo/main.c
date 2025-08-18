@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/07/02 19:52:04 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/18 16:42:51 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int	check_arguments(char **argv)
 
 void	initialize_table_struct(char **argv, t_table *table, t_philo *philos)
 {
+	struct timeval	tv;
+	table->start_time = gettimeofday(&tv, NULL);
 	table->nbr_philo = ft_atoi(argv[1]);
 	table->time_to_die = ft_atol(argv[2]);
 	table->time_to_eat = ft_atol(argv[3]);
@@ -57,6 +59,21 @@ void	initialize_table_struct(char **argv, t_table *table, t_philo *philos)
 	table->philos = philos;
 }
 
+void	start_eating(t_table *table)
+{
+	t_philo *philo = table->philos;
+	pthread_t thread_id;
+    int i = 0;
+
+	while (i < table->nbr_philo)
+    {
+        pthread_create(&thread_id, NULL, philo_routine, philo);
+        p->thread_id = thread_id; // store thread if you want to join later
+        p = p->next;
+		i++;
+    }
+}
+
 int	main(int argc, char *argv[])
 {
 	t_table	*table;
@@ -72,12 +89,7 @@ int	main(int argc, char *argv[])
 	{
 		initialize_table_struct(argv, table, philo_list);
 		philo_list = create_philo_circular_linked_list(table);
-		while (i < table->nbr_philo)
-		{
-			printf("%d\n", philo_list->id);
-			philo_list = philo_list->next;
-			i++;
-		}
+		start_eating(table);
 	}
 	else
 		printf("Invalid arguments\n");

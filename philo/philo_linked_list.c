@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:42:35 by lusimon           #+#    #+#             */
-/*   Updated: 2025/07/02 19:50:14 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/18 14:58:28 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ t_philo	*ft_lstnew(int id, t_table *table)
 	philo->last_meal_time = 0;
 	philo->state = THINKING;
 	philo->table = table;
+	philo->reaction_time = (id % 2) * 1000;
 	if (pthread_mutex_init(&philo->fork, NULL) != 0)
 	{
 		free(philo);
