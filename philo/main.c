@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/18 16:42:51 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/19 12:20:17 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,19 +59,19 @@ void	initialize_table_struct(char **argv, t_table *table, t_philo *philos)
 	table->philos = philos;
 }
 
-void	start_eating(t_table *table)
+void	start_eating_start_monitor(t_table *table)
 {
+	int i = 0;
 	t_philo *philo = table->philos;
-	pthread_t thread_id;
-    int i = 0;
 
 	while (i < table->nbr_philo)
     {
-        pthread_create(&thread_id, NULL, philo_routine, philo);
-        p->thread_id = thread_id; // store thread if you want to join later
-        p = p->next;
+		//I need to initialize philo->thread_id to NULL, 0 ? When I initialize the linked list of philos
+        pthread_create(philo->thread_id, NULL, philo_routine, philo);
+        philo = philo->next;
 		i++;
     }
+	pthread_create(table->monitor, NULL, monitor_routine, &table);
 }
 
 int	main(int argc, char *argv[])
@@ -89,9 +89,27 @@ int	main(int argc, char *argv[])
 	{
 		initialize_table_struct(argv, table, philo_list);
 		philo_list = create_philo_circular_linked_list(table);
-		start_eating(table);
+		start_eating_start_monitor(table);
+		// Wait for monitor to finish (simulation ends here)
+		pthread_join(table->monitor, NULL);
+		//👉 which means: “wait until the monitor thread finishes before continuing / exiting main”.
 	}
 	else
 		printf("Invalid arguments\n");
 	return (0);
 }
+
+//Parse arguments and initalize table
+//Create circular linked list of philosophers
+//Create one thread per philo (start_eating function)
+//The pthread_create(&thread_id, NULL, philo_routine, philo);
+//will call the action that the threads will execute -> the philo routine
+//In the same time we will create the thread for the monitor
+//The monitor will check the deads or if the number of meals is reached
+//When the monitor detects something wrong, he will send a stop message to each philo
+//So each philos when then receive this message, they will exit their routine loop
+//During this time in the main
+//pthread_join doesn’t force a thread to stop.
+//It just says: “I will wait here until this thread finishes.”
+//so in the main we wait for each finised thread of each philo
+//then we wait for the finised thread of the monitor

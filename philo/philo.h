@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/18 16:40:31 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/18 17:18:28 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,14 @@ typedef struct s_table
 	pthread_mutex_t	print_lock;
 	//Used to prevent messages from mixing when multiple philosophers print simultaneously.
 	t_philo			*philos; // pointer to the first philo in the circular linked list
+	pthread_t		monitor; // here is your monitor thread ID
 }	t_table;
 
 //I want a circular linked list
 typedef struct s_philo
 {
 	int				id; // philo nbr 1, philo nbr 2 ... 
+	pthread_t		thread_id;
 	pthread_mutex_t	fork;
 	//philo->fork: lock left
 	//philo->next->fork: lock right
