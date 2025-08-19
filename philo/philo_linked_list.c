@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:42:35 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/18 14:58:28 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/19 17:48:45 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,5 +89,6 @@ t_philo	*create_philo_circular_linked_list(t_table *table)
 		last = ft_lstlast(lst_philo);
 		last->next = lst_philo;
 	}
+	table->philos = lst_philo;
 	return (lst_philo);
 }

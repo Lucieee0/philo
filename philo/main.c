@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/19 12:20:17 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/19 17:49:29 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,32 +66,52 @@ void	start_eating_start_monitor(t_table *table)
 
 	while (i < table->nbr_philo)
     {
-		//I need to initialize philo->thread_id to NULL, 0 ? When I initialize the linked list of philos
-        pthread_create(philo->thread_id, NULL, philo_routine, philo);
+		printf("here_before_function\n");
+		//Pass the function pointer without calling it, and pass philo as the argument instead:
+        if (pthread_create(&philo->thread_id, NULL, philo_routine, philo) == 0)
+			printf("failde\n");
+		printf("here_after_function\n");
         philo = philo->next;
 		i++;
     }
-	pthread_create(table->monitor, NULL, monitor_routine, &table);
+	pthread_create(&table->monitor_thread_id, NULL, monitor_routine, table);
 }
 
 int	main(int argc, char *argv[])
 {
 	t_table	*table;
-	t_philo	*philo_list;
+	t_philo	*philo;
 	int		i;
 
 	i = 0;
 	table = (t_table *)malloc(sizeof(t_table));
 	if (!table)
 		return (1);
-	philo_list = NULL;
+	philo = NULL;
 	if ((argc == 5 || argc == 6) && (check_arguments(argv) > 0))
 	{
-		initialize_table_struct(argv, table, philo_list);
-		philo_list = create_philo_circular_linked_list(table);
+		printf("here\n");
+		initialize_table_struct(argv, table, philo);
+		philo = create_philo_circular_linked_list(table);
+		printf("here\n");
 		start_eating_start_monitor(table);
+		t_philo *cur = philo;
+		while (i < table->nbr_philo)
+		{
+			if (pthread_join(cur->thread_id, NULL) != 0)
+			{
+				printf("capturing all the philo threads failed\n");
+				return (1);
+			}
+			cur = cur->next;
+			i++;
+		}
 		// Wait for monitor to finish (simulation ends here)
-		pthread_join(table->monitor, NULL);
+		if (pthread_join(table->monitor_thread_id, NULL) != 0)
+		{
+			printf("capturing the monitor thread failed\n");
+			return (1);
+		}
 		//👉 which means: “wait until the monitor thread finishes before continuing / exiting main”.
 	}
 	else

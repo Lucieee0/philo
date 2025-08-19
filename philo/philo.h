@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/18 17:18:28 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/19 17:38:27 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct s_table
 	pthread_mutex_t	print_lock;
 	//Used to prevent messages from mixing when multiple philosophers print simultaneously.
 	t_philo			*philos; // pointer to the first philo in the circular linked list
-	pthread_t		monitor; // here is your monitor thread ID
+	pthread_t		monitor_thread_id; // here is your monitor thread ID
 }	t_table;
 
 //I want a circular linked list
@@ -75,11 +75,15 @@ long	ft_atol(const char *str);
 //main
 int		check_arguments(char **argv);
 void	initialize_table_struct(char **argv, t_table *table, t_philo *philos);
+void	start_eating_start_monitor(t_table *table);
 int		main(int argc, char *argv[]);
 //philo_linked_list
 t_philo	*ft_lstnew(int id, t_table *table);
 t_philo	*ft_lstlast(t_philo *philo);
 void	ft_lstadd_back(t_philo **lst_philo, int id, t_table *table);
 t_philo	*create_philo_circular_linked_list(t_table *table);
+//philo_routine
+void	*philo_routine(void *data);
+void	*monitor_routine(void *data);
 
 #endif
