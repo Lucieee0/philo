@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:47:22 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/19 17:35:37 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/20 17:29:49 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,21 @@ void *philo_routine(void *data)
 	// otherwise possiblity to have a philo reaction time
 	//what is the best?
     if (philo->id % 2 == 1)
-        usleep(100);
+        usleep(1000);
 
     while (philo->table->stop == 0)
     {
+		//printf("Thread ID: %lu\n", (unsigned long)(uintptr_t)philo->thread_id);
+		printf("philo id: %d, timestamp: %ld, cafe: %d\n", philo->id, get_timestamp(philo->table), cafe);
+		usleep(5000000); //5 seconds
 		cafe += 1;
-		printf("Thread ID: %lu\n", (unsigned long)(uintptr_t)philo->thread_id);
-		usleep(5000000);
         // think(philo);
         // take_forks(philo);
         // eat(philo);
         // put_forks(philo);
         // sleep_philo(philo);
     }
-	printf("Philo thread ID: %lu number_coffee: %d\n", (unsigned long)(uintptr_t)philo->thread_id, cafe);
+	//printf("Philo thread ID: %lu number_coffee: %d\n", (unsigned long)(uintptr_t)philo->thread_id, cafe);
 	return (NULL);
 }
 
@@ -42,8 +43,44 @@ void	*monitor_routine(void *data)
 {
 	t_table *table = (t_table *)data;
 	printf("Monitor thread ID: %lu\n", (unsigned long)(uintptr_t)table->monitor_thread_id);
-	usleep(22000000);
+	usleep(22000000); //22 seconds
 	table->stop = 1;
 	printf("Monitor thread ID: %lu Activated the stop\n", (unsigned long)(uintptr_t)table->monitor_thread_id);
 	return (NULL);
 }
+
+//Even philo routine
+//Even philo take left fork
+//lock mutex of the left fork
+//lock the printf mutex
+//print timestamp_in_ms X has taken a fork
+//unlock the printf mutex
+
+//Even philo take right fork
+//lock the printf mutex
+//print timestamp_in_ms X has taken a fork
+//unlock the printf mutex
+
+//update philo last_meal timestamp
+//lock the printf mutex
+//print timestamp_in_ms X is eating
+//unlock the printf mutex
+//usleep(time_to_eat)
+//unlock both fork mutexes when done
+
+//lock printf mutex
+//print timestamp_in_ms X is sleeping
+//unlock the printf mutex
+//usleep(time_to_sleep)
+
+//lock the printf mutex
+//print timestamp_in_ms X is thinking
+//unlock the printf mutex
+
+//Odd philo routine
+//philo take right fork and then left fork
+
+//Monitor thread routine
+//checks if current_time - last meal > time_to_die
+//timestamp_in_ms X died
+//stops the simulation

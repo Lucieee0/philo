@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/19 17:49:29 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/20 16:59:46 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ int	check_arguments(char **argv)
 
 void	initialize_table_struct(char **argv, t_table *table, t_philo *philos)
 {
-	struct timeval	tv;
-	table->start_time = gettimeofday(&tv, NULL);
+	table->start_time = get_time_s();
 	table->nbr_philo = ft_atoi(argv[1]);
 	table->time_to_die = ft_atol(argv[2]);
 	table->time_to_eat = ft_atol(argv[3]);
@@ -66,11 +65,9 @@ void	start_eating_start_monitor(t_table *table)
 
 	while (i < table->nbr_philo)
     {
-		printf("here_before_function\n");
 		//Pass the function pointer without calling it, and pass philo as the argument instead:
-        if (pthread_create(&philo->thread_id, NULL, philo_routine, philo) == 0)
+        if (pthread_create(&philo->thread_id, NULL, philo_routine, philo) != 0)
 			printf("failde\n");
-		printf("here_after_function\n");
         philo = philo->next;
 		i++;
     }
@@ -90,10 +87,8 @@ int	main(int argc, char *argv[])
 	philo = NULL;
 	if ((argc == 5 || argc == 6) && (check_arguments(argv) > 0))
 	{
-		printf("here\n");
 		initialize_table_struct(argv, table, philo);
 		philo = create_philo_circular_linked_list(table);
-		printf("here\n");
 		start_eating_start_monitor(table);
 		t_philo *cur = philo;
 		while (i < table->nbr_philo)
