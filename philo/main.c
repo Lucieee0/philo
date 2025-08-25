@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 17:48:05 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 18:22:26 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,8 @@ int	main(int argc, char *argv[])
 	}
 	else
 		printf("Invalid arguments\n");
+	free_philo_linked_list(philo);
+	free(table);
 	return (0);
 }
 
