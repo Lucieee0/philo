@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 11:43:02 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 12:58:56 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,11 @@ int	main(int argc, char *argv[])
 		initialize_table_struct(argv, table, philo);
 		philo = create_philo_circular_linked_list(table);
 		start_eating_start_monitor(table);
+		if (pthread_join(table->monitor_thread_id, NULL) != 0)
+		{
+			printf("capturing the monitor thread failed\n");
+			return (1);
+		}
 		t_philo *cur = philo;
 		while (i < table->nbr_philo)
 		{
@@ -101,13 +106,6 @@ int	main(int argc, char *argv[])
 			cur = cur->next;
 			i++;
 		}
-		// Wait for monitor to finish (simulation ends here)
-		if (pthread_join(table->monitor_thread_id, NULL) != 0)
-		{
-			printf("capturing the monitor thread failed\n");
-			return (1);
-		}
-		//👉 which means: “wait until the monitor thread finishes before continuing / exiting main”.
 	}
 	else
 		printf("Invalid arguments\n");
