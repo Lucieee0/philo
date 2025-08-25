@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 13:41:48 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 17:53:33 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,9 @@ typedef struct s_philo
 	//philo->fork: lock left
 	//philo->next->fork: lock right
 	struct s_philo	*next;
+	pthread_mutex_t	count_meal;
 	int				times_eaten;
+	pthread_mutex_t	last_meal;
 	long			last_meal_time;
 	t_state			state;
 	t_table			*table;

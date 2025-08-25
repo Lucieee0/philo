@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:47:22 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 13:41:26 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 18:03:41 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,26 @@ int	check_stop_condition(t_philo *philo)
 
 int max_meal(t_philo *philo)
 {
-    if (philo->table->nbr_of_meals == 0)
-        return (0);
-    if (philo->times_eaten >= philo->table->nbr_of_meals)
-        return (1);
-	return(0);
+	int i;
+	int	nbr_philo;
+	
+	i = 0;
+	nbr_philo = philo->table->nbr_philo;
+	if (philo->table->nbr_of_meals == 0)
+		return (0);
+	while (i < nbr_philo)
+	{
+		pthread_mutex_lock(&philo->count_meal);
+		if (philo->times_eaten < philo->table->nbr_of_meals)
+		{
+			pthread_mutex_unlock(&philo->count_meal);
+			return (0); // someone hasn’t finished yet
+		}
+		pthread_mutex_unlock(&philo->count_meal);
+		philo = philo->next;
+		i++;
+	}
+	return (1); // all philosophers reached nbr_of_meals
 }
 
 void	even_philo_eat(t_philo *philo)
@@ -55,11 +70,15 @@ void	even_philo_eat(t_philo *philo)
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
+	pthread_mutex_lock(&philo->last_meal);
 	philo->last_meal_time = get_timestamp(philo->table);
+	pthread_mutex_unlock(&philo->last_meal);
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is eating\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
+	pthread_mutex_lock(&philo->count_meal);
 	philo->times_eaten += 1;
+	pthread_mutex_unlock(&philo->count_meal);
 	usleep(philo->table->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->fork);
 	pthread_mutex_unlock(&philo->next->fork);
@@ -88,11 +107,15 @@ void	odd_philo_eat(t_philo *philo)
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
+	pthread_mutex_lock(&philo->last_meal);
 	philo->last_meal_time = get_timestamp(philo->table);
+	pthread_mutex_unlock(&philo->last_meal);
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is eating\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
+	pthread_mutex_lock(&philo->count_meal);
 	philo->times_eaten += 1;
+	pthread_mutex_unlock(&philo->count_meal);
 	usleep(philo->table->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->next->fork);
 	pthread_mutex_unlock(&philo->fork);
@@ -115,7 +138,7 @@ void	philo_thinks(t_philo *philo)
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is thinking\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
-	usleep(philo->table->time_to_sleep * 1000);
+	usleep(80);
 	//not correct
 	//maybe try and use pthread_mutex_trylock?
 }
@@ -169,8 +192,13 @@ void	*monitor_routine(void *data)
 	t_philo *philo = table->philos;
 	while (1)
 	{
+		pthread_mutex_lock(&philo->last_meal);
 		if (get_timestamp(table) - philo->last_meal_time > table->time_to_die)
+		{
+			pthread_mutex_unlock(&philo->last_meal);
 			break;
+		}
+		pthread_mutex_unlock(&philo->last_meal);
 		if (max_meal(philo))
 			break;
 		usleep(1000);
@@ -180,7 +208,10 @@ void	*monitor_routine(void *data)
 	table->stop = 1;
 	pthread_mutex_unlock(&table->stop_lock);
 	pthread_mutex_lock(&table->print_lock);
-	printf("%lu %d died\n", get_timestamp(table), philo->id);
+	if (max_meal(philo))
+		printf("%lu All philos have eaten %d meals\n", get_timestamp(table), table->nbr_of_meals);
+	else
+		printf("%lu %d died\n", get_timestamp(table), philo->id);
 	pthread_mutex_unlock(&table->print_lock);
 	return (NULL);
 }
