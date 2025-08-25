@@ -6,101 +6,84 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:47:22 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 11:06:54 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 11:38:41 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	update_last_meal(t_philo *philo)
-{
-	//update philo last_meal timestamp
-//lock the printf mutex
-//print timestamp_in_ms X is eating
-//unlock the printf mutex
-//usleep(time_to_eat)
-//unlock both fork mutexes when done
-}
-
 void	even_philo_eat(t_philo *philo)
 {
-//Even philo take left fork
-//lock mutex of the left fork
-//lock the printf mutex
-//print timestamp_in_ms X has taken a fork
-//unlock the printf mutex
-
-//Even philo take right fork
-//lock the printf mutex
-//print timestamp_in_ms X has taken a fork
-//unlock the printf mutex
-
-	update_last_meal(philo);
+	pthread_mutex_lock(&philo->fork);
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	pthread_mutex_lock(&philo->next->fork);
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	philo->last_meal_time = get_timestamp(philo->table);
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d is eating\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	usleep(philo->table->time_to_eat);
+	pthread_mutex_unlock(&philo->fork);
+	pthread_mutex_unlock(&philo->next->fork);
 }
 
 void	odd_philo_eat(t_philo *philo)
 {
-//take right fork
-//lock mutex of the right fork
-//lock the printf mutex
-//print timestamp_in_ms X has taken a fork
-//unlock the printf mutex
-
-//philo take left fork
-//lock the printf mutex
-//print timestamp_in_ms X has taken a fork
-//unlock the printf mutex
-
-	update_last_meal(philo);
+	pthread_mutex_lock(&philo->next->fork);
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	pthread_mutex_lock(&philo->fork);
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	philo->last_meal_time = get_timestamp(philo->table);
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d is eating\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	usleep(philo->table->time_to_eat);
+	pthread_mutex_unlock(&philo->next->fork);
+	pthread_mutex_unlock(&philo->fork);
 }
 
 void	philo_sleeps(t_philo *philo)
 {
-	//lock printf mutex
-//print timestamp_in_ms X is sleeping
-//unlock the printf mutex
-//usleep(time_to_sleep)
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d is sleeping\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	usleep(philo->table->time_to_sleep);
 }
 
 void	philo_thinks(t_philo *philo)
 {
-	//lock the printf mutex
-//print timestamp_in_ms X is thinking
-//unlock the printf mutex
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d is thinking\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+	usleep(philo->table->time_to_sleep);
+	//not correct
+	//maybe try and use pthread_mutex_trylock?
 }
-
-
 
 void *philo_routine(void *data)
 {
 	t_philo *philo = (t_philo *)data;
-	int cafe = 0;
-
-    // small desync trick: odd philosophers wait a bit
-	// otherwise possiblity to have a philo reaction time
-	//what is the best?
-    if (philo->id % 2 == 1)
-	{
-		usleep(1000);
-		odd_philo_eat(philo);
-	}
-	else
-		even_philo_eat(philo);
-        
 
     while (philo->table->stop == 0)
     {
-		//printf("Thread ID: %lu\n", (unsigned long)(uintptr_t)philo->thread_id);
-		printf("philo id: %d, timestamp: %ld, cafe: %d\n", philo->id, get_timestamp(philo->table), cafe);
-		usleep(5000000); //5 seconds
-		cafe += 1;
-        // think(philo);
-        // take_forks(philo);
-        // eat(philo);
-        // put_forks(philo);
-        // sleep_philo(philo);
+		if (philo->id % 2 == 1)
+		{
+			usleep(1000);
+			odd_philo_eat(philo);
+		}
+		else
+			even_philo_eat(philo);
+		philo_sleeps(philo);
+		philo_thinks(philo);
     }
-	//printf("Philo thread ID: %lu number_coffee: %d\n", (unsigned long)(uintptr_t)philo->thread_id, cafe);
 	return (NULL);
 }
 
@@ -121,7 +104,7 @@ void	*monitor_routine(void *data)
 		philo = philo->next;
 	}
 	table->stop = 1;
-	printf("%lu %lu died\n", get_timestamp(table), philo->id);
+	printf("%lu %d died\n", get_timestamp(table), philo->id);
 	return (NULL);
 }
 

@@ -6,13 +6,13 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:36:54 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/20 16:59:08 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 11:42:36 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long	get_time_s(void)
+long	get_time_ms(void)
 {
 	struct timeval	tv;
 
@@ -21,5 +21,5 @@ long	get_time_s(void)
 }
 long	get_timestamp(t_table *table)
 {
-	return (get_time_s() - table->start_time);
+	return (get_time_ms() - table->start_time);
 }

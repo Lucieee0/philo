@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/20 16:59:46 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 11:43:02 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	check_arguments(char **argv)
 
 void	initialize_table_struct(char **argv, t_table *table, t_philo *philos)
 {
-	table->start_time = get_time_s();
+	table->start_time = get_time_ms();
 	table->nbr_philo = ft_atoi(argv[1]);
 	table->time_to_die = ft_atol(argv[2]);
 	table->time_to_eat = ft_atol(argv[3]);
