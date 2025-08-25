@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 13:27:12 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 13:41:48 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ void	ft_lstadd_back(t_philo **lst_philo, int id, t_table *table);
 t_philo	*create_philo_circular_linked_list(t_table *table);
 //philo_routine
 int		check_stop_condition(t_philo *philo);
+int 	max_meal(t_philo *philo);
 void	even_philo_eat(t_philo *philo);
 void	odd_philo_eat(t_philo *philo);
 void	philo_sleeps(t_philo *philo);

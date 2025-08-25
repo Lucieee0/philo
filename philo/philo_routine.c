@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:47:22 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 13:23:55 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/25 13:41:26 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,15 @@ int	check_stop_condition(t_philo *philo)
 	stop = philo->table->stop;
 	pthread_mutex_unlock(&philo->table->stop_lock);
 	return (stop);
+}
+
+int max_meal(t_philo *philo)
+{
+    if (philo->table->nbr_of_meals == 0)
+        return (0);
+    if (philo->times_eaten >= philo->table->nbr_of_meals)
+        return (1);
+	return(0);
 }
 
 void	even_philo_eat(t_philo *philo)
@@ -50,6 +59,7 @@ void	even_philo_eat(t_philo *philo)
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is eating\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
+	philo->times_eaten += 1;
 	usleep(philo->table->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->fork);
 	pthread_mutex_unlock(&philo->next->fork);
@@ -82,6 +92,7 @@ void	odd_philo_eat(t_philo *philo)
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is eating\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
+	philo->times_eaten += 1;
 	usleep(philo->table->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->next->fork);
 	pthread_mutex_unlock(&philo->fork);
@@ -159,6 +170,8 @@ void	*monitor_routine(void *data)
 	while (1)
 	{
 		if (get_timestamp(table) - philo->last_meal_time > table->time_to_die)
+			break;
+		if (max_meal(philo))
 			break;
 		usleep(1000);
 		philo = philo->next;
