@@ -6,11 +6,13 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:47:22 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/27 16:54:38 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/27 17:30:56 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+
 
 int	check_own_death(t_philo *philo)
 {
@@ -46,7 +48,7 @@ void	philo_eat(t_philo *philo)
 		pthread_mutex_unlock(&philo->table->meal_reached);
 	}
 	pthread_mutex_unlock(&philo->count_meal);
-	usleep(philo->table->time_to_eat * 1000);
+	custom_usleep(philo->table->time_to_eat * 1000);
 	pthread_mutex_unlock(&philo->next->fork);
 	pthread_mutex_unlock(&philo->fork);
 }
@@ -79,7 +81,7 @@ void	even_philo_take_forks(t_philo *philo)
 
 void	odd_philo_take_forks(t_philo *philo)
 {
-	usleep(1000);
+	custom_usleep(1000);
 	if (check_stop_condition(philo))
 		return;
 	pthread_mutex_lock(&philo->next->fork);
@@ -111,7 +113,7 @@ void	philo_sleeps(t_philo *philo)
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is sleeping\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
-	usleep(philo->table->time_to_sleep * 1000);
+	custom_usleep(philo->table->time_to_sleep * 1000);
 }
 
 void	philo_thinks(t_philo *philo)
@@ -125,7 +127,7 @@ void	philo_thinks(t_philo *philo)
 	printf("%lu %d is thinking\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	if (think_time > 0)
-		usleep(think_time * 1000);
+		custom_usleep(think_time * 1000);
 	//not correct
 	//maybe try and use pthread_mutex_trylock?
 }
@@ -140,7 +142,7 @@ void	one_philo(t_philo *philo)
 	{
 		if (check_own_death(philo))
 			break;
-		usleep(1000);
+		custom_usleep(100);
 	}
 	pthread_mutex_unlock(&philo->fork);
 }

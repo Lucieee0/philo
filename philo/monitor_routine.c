@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/27 14:57:35 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/27 16:36:57 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/27 17:29:02 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	*monitor_routine(void *data)
 			break;
 		}
 		pthread_mutex_unlock(&table->died);
-		usleep(1000);
+		custom_usleep(1000);
 	}
 	pthread_mutex_lock(&table->stop_lock);
 	table->stop = 1;

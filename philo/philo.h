@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/27 16:26:27 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/27 17:27:18 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,5 +106,6 @@ void	*monitor_routine(void *data);
 //time
 long	get_time_ms(void);
 long	get_timestamp(t_table *table);
+void custom_usleep(useconds_t microseconds);
 
 #endif
