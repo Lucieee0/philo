@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:47:22 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/27 16:43:38 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/27 16:54:38 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ int	check_own_death(t_philo *philo)
 	{
 		pthread_mutex_lock(&philo->table->died);
 		philo->table->philo_died += 1;
+		philo->table->id_dead_philo = philo->id;
 		pthread_mutex_unlock(&philo->table->died);
 		pthread_mutex_unlock(&philo->last_meal);
-		philo->table->id_dead_philo = philo->id;
 		return (1);
 	}
 	pthread_mutex_unlock(&philo->last_meal);
