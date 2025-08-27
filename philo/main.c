@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:39:17 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 18:22:26 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/27 15:57:05 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,24 @@ void	initialize_table_struct(char **argv, t_table *table, t_philo *philos)
 	else
 		table->nbr_of_meals = 0;
 	table->stop = 0;
+	table->philo_died = 0;
+	table->philo_finished_eating = 0;
 	if (pthread_mutex_init(&table->stop_lock, NULL) != 0)
 	{
 		free(table);
 		return ;
 	}
 	if (pthread_mutex_init(&table->print_lock, NULL) != 0)
+	{
+		free(table);
+		return ;
+	}
+	if (pthread_mutex_init(&table->died, NULL) != 0)
+	{
+		free(table);
+		return ;
+	}
+	if (pthread_mutex_init(&table->meal_reached, NULL) != 0)
 	{
 		free(table);
 		return ;

@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/27 15:40:11 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/27 16:26:27 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,11 @@ typedef struct s_table
 	//Used to prevent messages from mixing when multiple philosophers print simultaneously.
 	t_philo			*philos; // pointer to the first philo in the circular linked list
 	pthread_t		monitor_thread_id; // here is your monitor thread ID
+	pthread_mutex_t	died;
+	int				philo_died;
+	pthread_mutex_t	meal_reached;
+	int				philo_finished_eating;
+	int				id_dead_philo;
 }	t_table;
 
 //I want a circular linked list
@@ -67,6 +72,7 @@ typedef struct s_philo
 	t_state			state;
 	t_table			*table;
 	unsigned long	reaction_time;
+	int				nbr_of_meals;
 	//very important that each philo have a different reaction time 
 	//so that we avoid deadlocks
 }	t_philo;
@@ -86,7 +92,7 @@ void	ft_lstadd_back(t_philo **lst_philo, int id, t_table *table);
 t_philo	*create_philo_circular_linked_list(t_table *table);
 void	free_philo_linked_list(t_philo *philo);
 //philo_routine
-int 	max_meal(t_philo *philo);
+int		check_own_death(t_philo *philo);
 void	philo_eat(t_philo *philo);
 void	even_philo_take_forks(t_philo *philo);
 void	odd_philo_take_forks(t_philo *philo);
