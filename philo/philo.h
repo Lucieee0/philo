@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/25 18:17:00 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/27 15:40:11 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,13 +86,16 @@ void	ft_lstadd_back(t_philo **lst_philo, int id, t_table *table);
 t_philo	*create_philo_circular_linked_list(t_table *table);
 void	free_philo_linked_list(t_philo *philo);
 //philo_routine
-int		check_stop_condition(t_philo *philo);
 int 	max_meal(t_philo *philo);
-void	even_philo_eat(t_philo *philo);
-void	odd_philo_eat(t_philo *philo);
+void	philo_eat(t_philo *philo);
+void	even_philo_take_forks(t_philo *philo);
+void	odd_philo_take_forks(t_philo *philo);
 void	philo_sleeps(t_philo *philo);
 void	philo_thinks(t_philo *philo);
+void	one_philo(t_philo *philo);
 void	*philo_routine(void *data);
+//monitor routine
+int		check_stop_condition(t_philo *philo);
 void	*monitor_routine(void *data);
 //time
 long	get_time_ms(void);

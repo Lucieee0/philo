@@ -6,7 +6,7 @@
 #    By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/02 19:38:46 by lusimon           #+#    #+#              #
-#    Updated: 2025/08/19 17:14:23 by lusimon          ###   ########.fr        #
+#    Updated: 2025/08/27 15:31:45 by lusimon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 
 # Source files
-SRCS = helper_functions.c philo_linked_list.c time.c main.c philo_routine.c
+SRCS = helper_functions.c philo_linked_list.c time.c main.c philo_routine.c monitor_routine.c
 
 HEADER_FILE = philo.h
 
