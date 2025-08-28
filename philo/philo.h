@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/28 16:35:56 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/28 17:14:01 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@ typedef enum e_state
 	SLEEPING = 2,
 	THINKING = 3,
 }	t_state;
+
+// typedef struct s_timeval
+// {
+// 	time_t		tv_sec;       seconds since Epoch (Jan 1, 1970)
+// 	suseconds_t	tv_usec;      microseconds (0–999999)
+// }	t_timeval;
 
 typedef struct s_philo	t_philo;
 
