@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:36:54 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/28 13:49:21 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/28 14:01:43 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ long	get_time_ms(void)
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000L + tv.tv_usec / 1000L);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 long	get_timestamp(t_table *table)
