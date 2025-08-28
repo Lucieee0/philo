@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/27 17:27:18 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/28 13:31:49 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,10 @@ int		ft_atoi(const char *str);
 long	ft_atol(const char *str);
 //main
 int		check_arguments(char **argv);
+int		initialize_table_threads(t_table *table);
 void	initialize_table_struct(char **argv, t_table *table, t_philo *philos);
 void	start_eating_start_monitor(t_table *table);
+int		join_threads(t_table *table, t_philo *philo);
 int		main(int argc, char *argv[]);
 //philo_linked_list
 t_philo	*ft_lstnew(int id, t_table *table);
@@ -102,6 +104,7 @@ void	one_philo(t_philo *philo);
 void	*philo_routine(void *data);
 //monitor routine
 int		check_stop_condition(t_philo *philo);
+int		check_stop_routine(t_table *table);
 void	*monitor_routine(void *data);
 //time
 long	get_time_ms(void);
