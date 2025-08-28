@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:41:07 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/28 13:31:49 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/28 13:48:52 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <pthread.h>
-
-//Can I have a linked list?
-//Where each philo is a node
-//
 
 typedef enum e_state
 {
@@ -43,11 +39,8 @@ typedef struct s_table
 	int				nbr_of_meals;
 	int				stop;
 	pthread_mutex_t	stop_lock;
-	//Used to protect the stop variable.
-	//Multiple threads (philosophers + monitor) may read/write stop concurrently.
 	pthread_mutex_t	print_lock;
-	//Used to prevent messages from mixing when multiple philosophers print simultaneously.
-	t_philo			*philos; // pointer to the first philo in the circular linked list
+	t_philo			*philos;
 	pthread_t		monitor_thread_id; // here is your monitor thread ID
 	pthread_mutex_t	died;
 	int				philo_died;
@@ -88,6 +81,7 @@ void	start_eating_start_monitor(t_table *table);
 int		join_threads(t_table *table, t_philo *philo);
 int		main(int argc, char *argv[]);
 //philo_linked_list
+int		initialize_philo_threads(t_philo *philo);
 t_philo	*ft_lstnew(int id, t_table *table);
 t_philo	*ft_lstlast(t_philo *philo);
 void	ft_lstadd_back(t_philo **lst_philo, int id, t_table *table);
@@ -109,6 +103,6 @@ void	*monitor_routine(void *data);
 //time
 long	get_time_ms(void);
 long	get_timestamp(t_table *table);
-void custom_usleep(useconds_t microseconds);
+void	custom_usleep(useconds_t microseconds);
 
 #endif

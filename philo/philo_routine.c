@@ -6,18 +6,17 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/18 16:47:22 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/27 17:30:56 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/28 13:44:29 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-
-
 int	check_own_death(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->last_meal);
-	if (get_timestamp(philo->table) - philo->last_meal_time > philo->table->time_to_die)
+	if (get_timestamp(philo->table) - philo->last_meal_time
+		> philo->table->time_to_die)
 	{
 		pthread_mutex_lock(&philo->table->died);
 		philo->table->philo_died += 1;
@@ -42,7 +41,6 @@ void	philo_eat(t_philo *philo)
 	philo->times_eaten += 1;
 	if (philo->times_eaten == philo->nbr_of_meals)
 	{
-		//does philo->table->nbr_of_meals provoque a data race?
 		pthread_mutex_lock(&philo->table->meal_reached);
 		philo->table->philo_finished_eating += 1;
 		pthread_mutex_unlock(&philo->table->meal_reached);
@@ -56,22 +54,22 @@ void	philo_eat(t_philo *philo)
 void	even_philo_take_forks(t_philo *philo)
 {
 	if (check_stop_condition(philo))
-		return;
+		return ;
 	pthread_mutex_lock(&philo->fork);
 	if (check_stop_condition(philo))
 	{
 		pthread_mutex_unlock(&philo->fork);
-		return;
+		return ;
 	}
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	pthread_mutex_lock(&philo->next->fork);
-	if (check_stop_condition(philo)) 
+	if (check_stop_condition(philo))
 	{
-	    pthread_mutex_unlock(&philo->fork);
-	    pthread_mutex_unlock(&philo->next->fork);
-	    return;
+		pthread_mutex_unlock(&philo->fork);
+		pthread_mutex_unlock(&philo->next->fork);
+		return ;
 	}
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
@@ -83,22 +81,22 @@ void	odd_philo_take_forks(t_philo *philo)
 {
 	custom_usleep(1000);
 	if (check_stop_condition(philo))
-		return;
+		return ;
 	pthread_mutex_lock(&philo->next->fork);
 	if (check_stop_condition(philo))
 	{
 		pthread_mutex_unlock(&philo->next->fork);
-		return;
+		return ;
 	}
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	pthread_mutex_lock(&philo->fork);
-	if (check_stop_condition(philo)) 
+	if (check_stop_condition(philo))
 	{
-	    pthread_mutex_unlock(&philo->fork);
-	    pthread_mutex_unlock(&philo->next->fork);
-	    return;
+		pthread_mutex_unlock(&philo->fork);
+		pthread_mutex_unlock(&philo->next->fork);
+		return ;
 	}
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
@@ -109,7 +107,7 @@ void	odd_philo_take_forks(t_philo *philo)
 void	philo_sleeps(t_philo *philo)
 {
 	if (check_stop_condition(philo))
-		return;
+		return ;
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is sleeping\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
@@ -120,16 +118,15 @@ void	philo_thinks(t_philo *philo)
 {
 	unsigned long	think_time;
 
-	think_time = (philo->table->time_to_die - philo->table->time_to_eat - philo->table->time_to_sleep) / 2;
+	think_time = (philo->table->time_to_die
+			- philo->table->time_to_eat - philo->table->time_to_sleep) / 2;
 	if (check_stop_condition(philo))
-		return;
+		return ;
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is thinking\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	if (think_time > 0)
 		custom_usleep(think_time * 1000);
-	//not correct
-	//maybe try and use pthread_mutex_trylock?
 }
 
 void	one_philo(t_philo *philo)
@@ -141,40 +138,34 @@ void	one_philo(t_philo *philo)
 	while (!check_stop_condition(philo))
 	{
 		if (check_own_death(philo))
-			break;
+			break ;
 		custom_usleep(100);
 	}
 	pthread_mutex_unlock(&philo->fork);
 }
 
-void *philo_routine(void *data)
+void	*philo_routine(void *data)
 {
-	t_philo *philo;
-	
+	t_philo	*philo;
+
 	philo = (t_philo *)data;
 	if (philo->table->nbr_philo == 1)
-    {
+	{
 		one_philo(philo);
 		return (NULL);
-    }
-    while (!check_stop_condition(philo) && !check_own_death(philo))
-    {
+	}
+	while (!check_stop_condition(philo) && !check_own_death(philo))
+	{
 		if (philo->id % 2 == 1)
 			odd_philo_take_forks(philo);
 		else
 			even_philo_take_forks(philo);
 		if (check_stop_condition(philo))
-		    break;
+			break ;
 		philo_sleeps(philo);
 		if (check_stop_condition(philo))
-			break;
+			break ;
 		philo_thinks(philo);
-    }
+	}
 	return (NULL);
 }
-
-
-//Monitor thread routine
-//checks if current_time - last meal > time_to_die
-//timestamp_in_ms X died
-//stops the simulation

@@ -6,7 +6,7 @@
 /*   By: lusimon <lusimon@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 19:42:35 by lusimon           #+#    #+#             */
-/*   Updated: 2025/08/27 16:21:07 by lusimon          ###   ########.fr       */
+/*   Updated: 2025/08/28 13:40:19 by lusimon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,17 @@
 //the program take as argument the "number_of_philosophers"
 //one node per philo
 //one philo + one fork
+
+int	initialize_philo_threads(t_philo *philo)
+{
+	if (pthread_mutex_init(&philo->fork, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&philo->count_meal, NULL) != 0)
+		return (1);
+	if (pthread_mutex_init(&philo->last_meal, NULL) != 0)
+		return (1);
+	return (0);
+}
 
 t_philo	*ft_lstnew(int id, t_table *table)
 {
@@ -32,17 +43,7 @@ t_philo	*ft_lstnew(int id, t_table *table)
 	philo->table = table;
 	philo->nbr_of_meals = philo->table->nbr_of_meals;
 	philo->reaction_time = (id % 2) * 1000;
-	if (pthread_mutex_init(&philo->fork, NULL) != 0)
-	{
-		free(philo);
-		return (NULL);
-	}
-	if (pthread_mutex_init(&philo->count_meal, NULL) != 0)
-	{
-		free(philo);
-		return (NULL);
-	}
-	if (pthread_mutex_init(&philo->last_meal, NULL) != 0)
+	if (initialize_philo_threads(philo) == 1)
 	{
 		free(philo);
 		return (NULL);
@@ -93,8 +94,6 @@ t_philo	*create_philo_circular_linked_list(t_table *table)
 		ft_lstadd_back(&lst_philo, i + 1, table);
 		i++;
 	}
-	//make the last node point to the first one
-	//circular linked list
 	if (lst_philo)
 	{
 		last = ft_lstlast(lst_philo);
@@ -104,27 +103,24 @@ t_philo	*create_philo_circular_linked_list(t_table *table)
 	return (lst_philo);
 }
 
-void free_philo_linked_list(t_philo *philo)
+void	free_philo_linked_list(t_philo *philo)
 {
-    if (!philo)
-        return;
+	t_philo	*current;
+	t_philo	*next;
 
-    t_philo *current = philo;
-    t_philo *next = NULL;
-
-    while (1)
-    {
-        next = current->next;
-
-        pthread_mutex_destroy(&current->fork);
-        pthread_mutex_destroy(&current->count_meal);
-        pthread_mutex_destroy(&current->last_meal);
-
-        free(current);
-
-        if (next == philo) // we completed a full circle
-            break;
-
-        current = next;
-    }
+	if (!philo)
+		return ;
+	current = philo;
+	next = NULL;
+	while (1)
+	{
+		next = current->next;
+		pthread_mutex_destroy(&current->fork);
+		pthread_mutex_destroy(&current->count_meal);
+		pthread_mutex_destroy(&current->last_meal);
+		free(current);
+		if (next == philo)
+			break ;
+		current = next;
+	}
 }
