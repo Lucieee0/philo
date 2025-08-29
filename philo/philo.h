@@ -106,14 +106,14 @@ void	one_philo(t_philo *philo);
 void	*philo_routine(void *data);
 
 //monitor routine
+int		check_own_death(t_philo *philo);
 int		check_stop_condition(t_philo *philo);
-int		check_stop_routine(t_table *table);
 void	*monitor_routine(void *data);
 
 //time
 long	get_time_ms(void);
 long	get_timestamp(t_table *table);
 long	get_elapsed_time_microseconds(struct timeval start, struct timeval end);
-void	custom_usleep(long usec);
+void	custom_usleep(long usec, t_philo *philo);
 
 #endif

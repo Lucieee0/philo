@@ -12,33 +12,41 @@
 
 #include "philo.h"
 
-int	check_stop_condition(t_philo *philo)
+int	check_own_death(t_philo *philo)
 {
-	int	stop;
-
-	stop = 0;
-	pthread_mutex_lock(&philo->table->stop_lock);
-	stop = philo->table->stop;
-	pthread_mutex_unlock(&philo->table->stop_lock);
-	return (stop);
+	pthread_mutex_lock(&philo->last_meal);
+	if (get_timestamp(philo->table) - philo->last_meal_time
+		> philo->table->time_to_die)
+	{
+		pthread_mutex_lock(&philo->table->died);
+		philo->table->philo_died += 1;
+		philo->table->id_dead_philo = philo->id;
+		pthread_mutex_unlock(&philo->table->died);
+		pthread_mutex_unlock(&philo->last_meal);
+		return (1);
+	}
+	pthread_mutex_unlock(&philo->last_meal);
+	return (0);
 }
 
-int	check_stop_routine(t_table *table)
+int	check_stop_condition(t_philo *philo)
 {
-	pthread_mutex_lock(&table->meal_reached);
-	if (table->philo_finished_eating >= table->nbr_philo)
+	if (check_own_death(philo))
+		return (1);
+	pthread_mutex_lock(&philo->table->meal_reached);
+	if (philo->table->philo_finished_eating >= philo->table->nbr_philo)
 	{
-		pthread_mutex_unlock(&table->meal_reached);
+		pthread_mutex_unlock(&philo->table->meal_reached);
 		return (1);
 	}
-	pthread_mutex_unlock(&table->meal_reached);
-	pthread_mutex_lock(&table->died);
-	if (table->philo_died > 0)
+	pthread_mutex_unlock(&philo->table->meal_reached);
+	pthread_mutex_lock(&philo->table->died);
+	if (philo->table->philo_died > 0)
 	{
-		pthread_mutex_unlock(&table->died);
+		pthread_mutex_unlock(&philo->table->died);
 		return (1);
 	}
-	pthread_mutex_unlock(&table->died);
+	pthread_mutex_unlock(&philo->table->died);
 	return (0);
 }
 
@@ -49,13 +57,10 @@ void	*monitor_routine(void *data)
 	table = (t_table *)data;
 	while (1)
 	{
-		if (check_stop_routine(table) == 1)
+		if (check_stop_condition(table->philos) == 1)
 			break ;
-		custom_usleep(1000);
+		custom_usleep(1000, table->philos);
 	}
-	pthread_mutex_lock(&table->stop_lock);
-	table->stop = 1;
-	pthread_mutex_unlock(&table->stop_lock);
 	pthread_mutex_lock(&table->print_lock);
 	if (table->philo_died == 0)
 		printf("%lu All philos have eaten %d meals\n",

@@ -14,12 +14,12 @@
 
 void	philo_sleeps(t_philo *philo)
 {
-	if (check_stop_condition(philo))
+	if (check_stop_condition(philo) == 1)
 		return ;
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is sleeping\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
-	custom_usleep(philo->table->time_to_sleep * 1000);
+	custom_usleep(philo->table->time_to_sleep * 1000, philo);
 }
 
 void	philo_thinks(t_philo *philo)
@@ -28,13 +28,13 @@ void	philo_thinks(t_philo *philo)
 
 	think_time = (philo->table->time_to_die
 			- philo->table->time_to_eat - philo->table->time_to_sleep) / 2;
-	if (check_stop_condition(philo))
+	if (check_stop_condition(philo) == 1)
 		return ;
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d is thinking\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	if (think_time > 0)
-		custom_usleep(think_time * 1000);
+		custom_usleep(think_time * 1000, philo);
 }
 
 void	one_philo(t_philo *philo)
@@ -43,11 +43,11 @@ void	one_philo(t_philo *philo)
 	pthread_mutex_lock(&philo->table->print_lock);
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
-	while (!check_stop_condition(philo))
+	while (check_stop_condition(philo) != 1)
 	{
 		if (check_own_death(philo))
 			break ;
-		custom_usleep(100);
+		custom_usleep(100, philo);
 	}
 	pthread_mutex_unlock(&philo->fork);
 }
@@ -62,16 +62,16 @@ void	*philo_routine(void *data)
 		one_philo(philo);
 		return (NULL);
 	}
-	while (!check_stop_condition(philo) && !check_own_death(philo))
+	while (check_stop_condition(philo) != 1)
 	{
 		if (philo->id % 2 == 1)
 			odd_philo_take_forks(philo);
 		else
 			even_philo_take_forks(philo);
-		if (check_stop_condition(philo))
+		if (check_stop_condition(philo) == 1)
 			break ;
 		philo_sleeps(philo);
-		if (check_stop_condition(philo))
+		if (check_stop_condition(philo) == 1)
 			break ;
 		philo_thinks(philo);
 	}

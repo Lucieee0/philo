@@ -31,7 +31,7 @@ long	get_elapsed_time_microseconds(struct timeval start, struct timeval end)
 		+ (end.tv_usec - start.tv_usec));
 }
 
-void	custom_usleep(long usec)
+void	custom_usleep(long usec, t_philo *philo)
 {
 	struct timeval	start;
 	struct timeval	current;
@@ -42,11 +42,15 @@ void	custom_usleep(long usec)
 	gettimeofday(&start, NULL);
 	while (elapsed < usec)
 	{
+		if (check_stop_condition(philo) == 1)
+			break;
 		gettimeofday(&current, NULL);
 		elapsed = get_elapsed_time_microseconds(start, current);
 		remaining = usec - elapsed;
 		if (remaining > 1000)
 			usleep(remaining / 2);
+		else
+			usleep(50);
 	}
 }
 
