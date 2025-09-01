@@ -12,39 +12,45 @@
 
 #include "philo.h"
 
+static int	try_lock_fork(pthread_mutex_t *fork, t_philo *philo)
+{
+	while (pthread_mutex_trylock(fork) != 0)
+	{
+		if (check_stop_condition(philo) == 1)
+			return (0);
+		custom_usleep(1000, philo);
+	}
+	return (1);
+}
+
+static void	print_taken_fork(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->table->print_lock);
+	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
+	pthread_mutex_unlock(&philo->table->print_lock);
+}
+
 void	even_philo_take_forks(t_philo *philo)
 {
 	if (check_stop_condition(philo) == 1)
 		return ;
-	while (pthread_mutex_trylock(&philo->fork) != 0)
-	{
-		if (check_stop_condition(philo) == 1)
-			return ;
-		custom_usleep(1000, philo);
-	}
+	if (!try_lock_fork(&philo->fork, philo))
+		return ;
 	if (check_stop_condition(philo) == 1)
 	{
 		pthread_mutex_unlock(&philo->fork);
 		return ;
 	}
-	pthread_mutex_lock(&philo->table->print_lock);
-	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
-	pthread_mutex_unlock(&philo->table->print_lock);
-	while (pthread_mutex_trylock(&philo->next->fork) != 0)
-	{
-		if (check_stop_condition(philo) == 1)
-			return ;
-		custom_usleep(1000, philo);
-	}
+	print_taken_fork(philo);
+	if (!try_lock_fork(&philo->next->fork, philo))
+		return ;
 	if (check_stop_condition(philo) == 1)
 	{
 		pthread_mutex_unlock(&philo->fork);
 		pthread_mutex_unlock(&philo->next->fork);
 		return ;
 	}
-	pthread_mutex_lock(&philo->table->print_lock);
-	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
-	pthread_mutex_unlock(&philo->table->print_lock);
+	print_taken_fork(philo);
 	philo_eat(philo);
 }
 
@@ -53,35 +59,23 @@ void	odd_philo_take_forks(t_philo *philo)
 	custom_usleep(1000, philo);
 	if (check_stop_condition(philo) == 1)
 		return ;
-	while (pthread_mutex_trylock(&philo->next->fork) != 0)
-	{
-		if (check_stop_condition(philo) == 1)
-			return ;
-		custom_usleep(1000, philo);
-	}
+	if (!try_lock_fork(&philo->next->fork, philo))
+		return ;
 	if (check_stop_condition(philo) == 1)
 	{
 		pthread_mutex_unlock(&philo->next->fork);
 		return ;
 	}
-	pthread_mutex_lock(&philo->table->print_lock);
-	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
-	pthread_mutex_unlock(&philo->table->print_lock);
-	while (pthread_mutex_trylock(&philo->fork) != 0)
-	{
-		if (check_stop_condition(philo) == 1)
-			return ;
-		custom_usleep(1000, philo);
-	}
+	print_taken_fork(philo);
+	if (!try_lock_fork(&philo->fork, philo))
+		return ;
 	if (check_stop_condition(philo) == 1)
 	{
 		pthread_mutex_unlock(&philo->fork);
 		pthread_mutex_unlock(&philo->next->fork);
 		return ;
 	}
-	pthread_mutex_lock(&philo->table->print_lock);
-	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
-	pthread_mutex_unlock(&philo->table->print_lock);
+	print_taken_fork(philo);
 	philo_eat(philo);
 }
 
