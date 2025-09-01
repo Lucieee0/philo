@@ -43,7 +43,7 @@ void	custom_usleep(long usec, t_philo *philo)
 	while (elapsed < usec)
 	{
 		if (check_stop_condition(philo) == 1)
-			break;
+			break ;
 		gettimeofday(&current, NULL);
 		elapsed = get_elapsed_time_microseconds(start, current);
 		remaining = usec - elapsed;

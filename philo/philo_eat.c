@@ -17,12 +17,11 @@ void	even_philo_take_forks(t_philo *philo)
 	if (check_stop_condition(philo) == 1)
 		return ;
 	while (pthread_mutex_trylock(&philo->fork) != 0)
-    {
-        if (check_stop_condition(philo) == 1)
-            return ;
-        custom_usleep(1000, philo); // Small delay before retry
-    }
-	//pthread_mutex_lock(&philo->fork);
+	{
+		if (check_stop_condition(philo) == 1)
+			return ;
+		custom_usleep(1000, philo);
+	}
 	if (check_stop_condition(philo) == 1)
 	{
 		pthread_mutex_unlock(&philo->fork);
@@ -32,12 +31,11 @@ void	even_philo_take_forks(t_philo *philo)
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	while (pthread_mutex_trylock(&philo->next->fork) != 0)
-    {
-        if (check_stop_condition(philo) == 1)
-            return ;
-        custom_usleep(1000, philo); // Small delay before retry
-    }
-	//pthread_mutex_lock(&philo->next->fork);
+	{
+		if (check_stop_condition(philo) == 1)
+			return ;
+		custom_usleep(1000, philo);
+	}
 	if (check_stop_condition(philo) == 1)
 	{
 		pthread_mutex_unlock(&philo->fork);
@@ -56,12 +54,11 @@ void	odd_philo_take_forks(t_philo *philo)
 	if (check_stop_condition(philo) == 1)
 		return ;
 	while (pthread_mutex_trylock(&philo->next->fork) != 0)
-    {
-        if (check_stop_condition(philo) == 1)
-            return ;
-        custom_usleep(1000, philo); // Small delay before retry
-    }
-	//pthread_mutex_lock(&philo->next->fork);
+	{
+		if (check_stop_condition(philo) == 1)
+			return ;
+		custom_usleep(1000, philo);
+	}
 	if (check_stop_condition(philo) == 1)
 	{
 		pthread_mutex_unlock(&philo->next->fork);
@@ -71,12 +68,11 @@ void	odd_philo_take_forks(t_philo *philo)
 	printf("%lu %d has taken a fork\n", get_timestamp(philo->table), philo->id);
 	pthread_mutex_unlock(&philo->table->print_lock);
 	while (pthread_mutex_trylock(&philo->fork) != 0)
-    {
-        if (check_stop_condition(philo) == 1)
-            return ;
-        custom_usleep(1000, philo); // Small delay before retry
-    }
-	//pthread_mutex_lock(&philo->fork);
+	{
+		if (check_stop_condition(philo) == 1)
+			return ;
+		custom_usleep(1000, philo);
+	}
 	if (check_stop_condition(philo) == 1)
 	{
 		pthread_mutex_unlock(&philo->fork);

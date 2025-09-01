@@ -76,6 +76,7 @@ int		ft_atoi(const char *str);
 long	ft_atol(const char *str);
 
 //check_arg_initialize
+int		monkey_testing(char **argv);
 int		check_arguments(char **argv);
 int		initialize_table_threads(t_table *table);
 void	initialize_table_struct(char **argv, t_table *table, t_philo *philos);

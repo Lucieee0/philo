@@ -12,6 +12,34 @@
 
 #include "philo.h"
 
+int	monkey_testing(char **argv)
+{
+	int	i;
+	int	j;
+
+	i = 1;
+	j = 0;
+	while (argv[i])
+	{
+		while (argv[i][j])
+		{
+			if (argv[i][j] == '-' || argv[i][j] == '+')
+				j++;
+			if (!(argv[i][j] >= 48 && argv[i][j] <= 57))
+				return (1);
+			j++;
+		}
+		if (j > 9)
+		{
+			printf("here2\n");
+			return (1);
+		}
+		j = 0;
+		i++;
+	}
+	return (0);
+}
+
 int	check_arguments(char **argv)
 {
 	int		i;
@@ -19,8 +47,11 @@ int	check_arguments(char **argv)
 
 	i = 1;
 	check = 0;
+	check = monkey_testing(argv);
+	if (check == 1)
+		return (0);
 	check = ft_atol(argv[i]);
-	if (check > 500)
+	if (check > 200)
 		return (0);
 	while (argv[i])
 	{

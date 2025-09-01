@@ -72,7 +72,10 @@ int	main(int argc, char *argv[])
 			return (1);
 	}
 	else
-		printf("Invalid arguments\n");
+	{
+		printf("Error: Invalid arguments\n");
+		return (1);
+	}
 	free_philo_linked_list(philo);
 	free(table);
 	return (0);
