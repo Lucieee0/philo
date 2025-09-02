@@ -73,7 +73,8 @@ void	*philo_routine(void *data)
 		philo_sleeps(philo);
 		if (check_stop_condition(philo) == 1)
 			break ;
-		philo_thinks(philo);
+		if (philo->id % 2 == 0)
+			philo_thinks(philo);
 	}
 	return (NULL);
 }

@@ -56,7 +56,7 @@ void	even_philo_take_forks(t_philo *philo)
 
 void	odd_philo_take_forks(t_philo *philo)
 {
-	custom_usleep(1000, philo);
+	philo_thinks(philo);
 	if (check_stop_condition(philo) == 1)
 		return ;
 	if (!try_lock_fork(&philo->next->fork, philo))
