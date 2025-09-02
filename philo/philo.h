@@ -43,8 +43,6 @@ typedef struct s_table
 	long			time_to_eat;
 	long			time_to_sleep;
 	int				nbr_of_meals;
-	int				stop;
-	pthread_mutex_t	stop_lock;
 	pthread_mutex_t	print_lock;
 	t_philo			*philos;
 	pthread_t		monitor_thread_id;

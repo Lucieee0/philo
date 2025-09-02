@@ -66,8 +66,6 @@ int	check_arguments(char **argv)
 
 int	initialize_table_threads(t_table *table)
 {
-	if (pthread_mutex_init(&table->stop_lock, NULL) != 0)
-		return (1);
 	if (pthread_mutex_init(&table->print_lock, NULL) != 0)
 		return (1);
 	if (pthread_mutex_init(&table->died, NULL) != 0)
@@ -88,7 +86,6 @@ void	initialize_table_struct(char **argv, t_table *table, t_philo *philos)
 		table->nbr_of_meals = ft_atoi(argv[5]);
 	else
 		table->nbr_of_meals = 0;
-	table->stop = 0;
 	table->philo_died = 0;
 	table->philo_finished_eating = 0;
 	if (initialize_table_threads(table) == 1)

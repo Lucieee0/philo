@@ -62,6 +62,7 @@ void	*monitor_routine(void *data)
 		custom_usleep(1000, table->philos);
 	}
 	pthread_mutex_lock(&table->print_lock);
+	pthread_mutex_lock(&table->philos->table->died);
 	if (table->philo_died == 0)
 	{
 		custom_usleep(1000, table->philos);
@@ -70,6 +71,7 @@ void	*monitor_routine(void *data)
 	}
 	else
 		printf("%lu %d died\n", get_timestamp(table), table->id_dead_philo);
+	pthread_mutex_unlock(&table->philos->table->died);
 	pthread_mutex_unlock(&table->print_lock);
 	return (NULL);
 }
